@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Adivinhação</title>
+    <style>
+        /* Estilo para esconder o elemento de celebração por padrão */
+        #celebration {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <h1>Jogo da Adivinhação</h1>
+        <input type="number" id="chute" placeholder="Digite seu chute" onkeydown="if (event.key === 'Enter') adivinhar()">
+        <button onclick="adivinhar()">Tentar adivinhar</button>
+        <div id="res02"></div>
+        <ul id="tentativasList"></ul>
+
+        <!-- Elemento para a celebração -->
+        <div id="celebration">
+            🎉 Parabéns! Você acertou! 🎉
+        </div>
+    </div>
+
+    <script>
+        let computador;
+        let tentativas = 0;
+
+        function sortear() {
+            const min = 1;
+            const max = 100;
+            computador = Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function adivinhar() {
+            const chute = parseInt(document.getElementById('chute').value, 10);
+
+            if (isNaN(chute)) {
+                alert('Por favor, insira um número válido.');
+                return;
+            }
+
+            if (computador === undefined) {
+                sortear();
+            }
+
+            const res02 = document.getElementById('res02');
+            const tentativasList = document.getElementById('tentativasList');
+            const li = document.createElement('li');
+
+            if (chute < computador) {
+                li.textContent = `O número é maior que ${chute}`;
+            } else if (chute > computador) {
+                li.textContent = `O número é menor que ${chute}`;
+            } else {
+                // O jogador acertou o número
+                tentativas++;
+                res02.innerHTML = `<p>Parabéns, você acertou em ${tentativas} tentativas!</p>`;
+                const celebration = document.getElementById('celebration');
+                celebration.style.display = 'block';
+
+                // Oculta a celebração após 3 segundos
+                setTimeout(() => {
+                    celebration.style.display = 'none';
+                    sortear();
+                    tentativas = 0;
+                    res02.innerHTML = '';
+                    tentativasList.innerHTML = '';
+                }, 3000);
+
+                return;
+            }
+
+            tentativas++;
+            tentativasList.appendChild(li);
+            document.getElementById('chute').value = '';
+        }
+    </script>
+</body>
+
+</html>
